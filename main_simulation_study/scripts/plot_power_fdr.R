@@ -17,6 +17,10 @@ df$method[df$method == "PTWAS"] <- "TWAS"
 df$method[df$method == "GLCP"] <- "Colocalization"
 
 
+#Change protein-TWAS to PWAS
+
+df$method[7] <- "PWAS"
+
 
 plotdf <- df %>%
 	mutate(Width = c(1,1,1,1,0.35,1,1)) %>%
@@ -28,7 +32,8 @@ plotdf <- df %>%
                                           "Multi-INTACT",
                                           "INTACT",
                                           "Colocalization",
-					  "TWAS"
+					  "TWAS",
+					  "PWAS"
                                           )))) %>%
         mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Molecular Phenotype Method",                                             qtl != "Protein and Expression" ~ "Single Molecular Phenotype Methods")) %>%
         mutate(num_molecular_pheno = factor(num_molecular_pheno, levels = rev(c("Single Molecular Phenotype Methods", "Multi-Molecular Phenotype Method")))) %>%
@@ -99,7 +104,7 @@ grDevices::cairo_pdf(output_file)
                 theme_bw() +
                 theme(text = element_text(size = 10,face="bold"),
                 axis.text.x = element_text(angle = 45, hjust=1),
-		legend.position="bottom",
+		legend.position="none",
 		legend.title=element_blank(),aspect.ratio = 1)) 
 dev.off()
 
