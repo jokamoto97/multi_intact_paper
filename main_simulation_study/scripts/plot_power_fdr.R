@@ -35,8 +35,8 @@ plotdf <- df %>%
 					  "TWAS",
 					  "PWAS"
                                           )))) %>%
-        mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Molecular Phenotype Method",                                             qtl != "Protein and Expression" ~ "Single Molecular Phenotype Methods")) %>%
-        mutate(num_molecular_pheno = factor(num_molecular_pheno, levels = rev(c("Single Molecular Phenotype Methods", "Multi-Molecular Phenotype Method")))) %>%
+        mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Gene Product Method",                                             qtl != "Protein and Expression" ~ "Single Gene Product Methods")) %>%
+        mutate(num_molecular_pheno = factor(num_molecular_pheno, levels = rev(c("Single Gene Product Methods", "Multi-Gene Product Method")))) %>%
         mutate(qtl = factor(qtl, levels = rev(c("Expression","Protein", "Protein and Expression"))))
 
 
@@ -104,7 +104,7 @@ grDevices::cairo_pdf(output_file)
                 theme_bw() +
                 theme(text = element_text(size = 10,face="bold"),
                 axis.text.x = element_text(angle = 45, hjust=1),
-		legend.position="none",
+		legend.position="bottom",
 		legend.title=element_blank(),aspect.ratio = 1)) 
 dev.off()
 

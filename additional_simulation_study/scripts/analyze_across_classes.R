@@ -77,8 +77,8 @@ power_df <- rbind.data.frame(power_df,
                                                 "class3"), labels = c(("Class 1 \n E -> Y & P -> Y"),
                                                                         ("Class 2 \n P -> Y"),
                                                                         ("Class 3 \n E -> Y")))) %>%
-       mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Molecular Phenotype Method",
-					     qtl != "Protein and Expression" ~ "Single Molecular Phenotype Methods"))	
+       mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Gene Product Method",
+					     qtl != "Protein and Expression" ~ "Single Gene Product Methods"))	
 
 
 
@@ -109,8 +109,8 @@ plotdf <- df %>%
                                           "INTACT",
                                           "Colocalization"
                                           )))) %>%
-        mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Molecular Phenotype Method",                                             qtl != "Protein and Expression" ~ "Single Molecular Phenotype Methods")) %>%
-        mutate(num_molecular_pheno = factor(num_molecular_pheno, levels = rev(c("Single Molecular Phenotype Methods", "Multi-Molecular Phenotype Method")))) %>%
+        mutate(num_molecular_pheno = case_when(qtl == "Protein and Expression" ~ "Multi-Gene Product Method",                                             qtl != "Protein and Expression" ~ "Single Gene Product Methods")) %>%
+        mutate(num_molecular_pheno = factor(num_molecular_pheno, levels = rev(c("Single Gene Product Methods", "Multi-Gene Product Method")))) %>%
         mutate(qtl = factor(qtl, levels = rev(c("Expression","Protein", "Protein and Expression")))) %>%
 	filter(!(method %in% c("Post_hoc","Chi-square")))
 
