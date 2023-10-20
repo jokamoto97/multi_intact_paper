@@ -13,6 +13,6 @@ M (2021.1), aod (1.3.2), pROC (1.18.4), ggpattern (1.1.0-0), ggh4x (0.2.5), qval
 
 ## Running analysis
 
-Before running the analysis, copy the sim_data/ directory from the Main simulation study Google drive folder at URL to this directory.
+Before running the analysis, copy the sim_data/ directory from the Main simulation study Google drive folder at https://tinyurl.com/ye2aysvf to this directory.
 
 Run ```make``` to start the analysis process.

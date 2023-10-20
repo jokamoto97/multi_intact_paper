@@ -15,7 +15,7 @@ data.table (1.14.8), dplyr (1.1.3), ggplot2 (3.4.2), tidyr (1.3.0), tidyverse (2
 
 ## Running analysis
 
-Before running the analysis, copy the data/ directory from the Metabolite data analysis Google drive folder at URL to this directory.
+Before running the analysis, copy the data/ directory from the Metabolite data analysis Google drive folder at https://tinyurl.com/ye2aysvf to this directory.
 
 Run ```make``` to start the analysis process.
 
