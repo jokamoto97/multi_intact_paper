@@ -7,7 +7,7 @@ In this analysis, we integrate the UK Biobank plasma pQTL data (Sun et al. (2023
 
 We use ```openmp_wrapper``` to run some of the analysis steps in parallel. We recommend using this tool to speed up computation.
 
-We estimate tissue-specific model priors using and EM algorithm. This step is computationally intensive and may take hours to run. If you wish to replicate this step, we have included a script to run on a high-performance cluster (commented out in the Makefile). If not, we have included the prior estimates in the data/ directory.
+We estimate tissue-specific model priors using an EM algorithm. This step is computationally intensive and may take hours to run. If you wish to replicate this step, we have included a script to run on a high-performance cluster (commented out in the Makefile). If not, we have included the prior estimates in the data/ directory.
 
 ## Required R packages
 
