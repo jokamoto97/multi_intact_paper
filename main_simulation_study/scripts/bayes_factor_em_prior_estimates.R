@@ -139,4 +139,66 @@ plot_fun_no_legend(most_common_mechanism = "P",df = rst_df)
 plot_fun_no_legend(most_common_mechanism = "E+P",df = rst_df)
 
 
+#Mean and 95% CI
+
+plot_fun_no_legend_mean <- function(most_common_mechanism,df){
+        df <- df %>% filter(most_common_alt_model == most_common_mechanism)
+grDevices::cairo_pdf(paste0("sim_rst/m_intact_prior_estimates_forest_plots_vary_priors_",most_common_mechanism,"_no_legend.pdf"))
+tmp <-df %>%
+        dplyr::select(pi1,pi2,pi3,most_common_alt_model) %>%
+        mutate(scaling_factor = pi1 + pi2 + pi3) %>%
+        mutate(pi1_scaled = pi1/scaling_factor,
+               pi2_scaled = pi2/scaling_factor,
+               pi3_scaled = pi3/scaling_factor) %>%
+        dplyr::select(pi1_scaled,pi2_scaled,pi3_scaled,most_common_alt_model) %>%
+        mutate(true_e_prop = case_when(most_common_alt_model == "E" ~ 0.5,
+                                       TRUE ~ 0.247)) %>%
+        mutate(true_p_prop = case_when(most_common_alt_model == "P" ~ 0.5,
+                                       TRUE ~ 0.25)) %>%
+        mutate(true_ep_prop = case_when(most_common_alt_model == "E+P" ~ 0.5,
+                                       TRUE ~ 0.253)) %>%
+	summarise(mean_pi1_scaled = mean(pi1_scaled),
+		  mean_pi2_scaled = mean(pi2_scaled),
+		  mean_pi3_scaled = mean(pi3_scaled),
+		  lower_pi1 = mean(pi1_scaled - 1.96*sd(pi1_scaled)),
+		  upper_pi1 = mean(pi1_scaled + 1.96*sd(pi1_scaled)),
+		  lower_pi2 = mean(pi2_scaled - 1.96*sd(pi2_scaled)),
+                  upper_pi2 = mean(pi2_scaled + 1.96*sd(pi2_scaled)),
+		  lower_pi3 = mean(pi3_scaled - 1.96*sd(pi3_scaled)),
+                  upper_pi3 = mean(pi3_scaled + 1.96*sd(pi3_scaled)),
+		  most_common_alt_model = unique(most_common_alt_model),
+		  true_e_prop = unique(true_e_prop),
+		  true_p_prop =  unique(true_p_prop),
+		  true_ep_prop =  unique(true_ep_prop))
+        plotdf <- data.frame(estimate = as.numeric(tmp[1,1:3]),
+			     lower = as.numeric(tmp[1,c(4,6,8)]),
+			     upper = as.numeric(tmp[1,c(5,7,9)]),
+			     most_common_alt_model = tmp$most_common_alt_model,
+			     true_e_prop = tmp$true_e_prop,true_p_prop = tmp$true_p_prop,
+			     true_ep_prop = tmp$true_ep_prop)
+	plotdf$param_type = c("pi1_scaled","pi2_scaled","pi3_scaled")	
+print(plotdf %>%
+        ggplot(aes(x = param_type,y = estimate,ymin = lower,ymax=upper,color = param_type)) +
+        geom_pointrange() + 
+        xlab("") +
+        ylab(expression("Mean Estimate (95% CI)"))+
+        geom_hline(aes(yintercept = true_e_prop,linetype = "E \u2192 Y only"),col="red",alpha = 0.9) +
+        geom_hline(aes(yintercept = true_p_prop,linetype = "P \u2192 Y only"),col="dark green",alpha = 0.9) +
+        geom_hline(aes(yintercept = true_ep_prop,linetype = "(E,P) \u2192 Y"),col="blue",alpha = 0.9) +
+        scale_linetype_manual(name = "True Mechanism Proportion", values = c(3,2,1),
+                      guide = guide_legend(override.aes = list(color = c("blue","red","dark green")))) +
+        scale_x_discrete(labels = c('pi1_scaled' = expression(hat(italic(f))[italic(M[E])]),
+                                      'pi2_scaled' = expression(hat(italic(f))[italic(M[P])]),
+                                      "pi3_scaled" = expression(hat(italic(f))[italic(M[E+P])]))) +
+        guides(fill = "none")+
+        theme_bw() +
+        theme(text = element_text(size = 25,face="bold"),,legend.position="none",aspect.ratio = 1))
+dev.off()
+}
+
+
+
+plot_fun_no_legend_mean(most_common_mechanism = "E",df = rst_df)
+plot_fun_no_legend_mean(most_common_mechanism = "P",df = rst_df)
+plot_fun_no_legend_mean(most_common_mechanism = "E+P",df = rst_df)
 

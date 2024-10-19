@@ -1,6 +1,7 @@
 library(qvalue)
 library(INTACT)
 library(dplyr)
+library(ggplot2)
 source("scripts/multi_intact.R")
 
 
@@ -123,6 +124,110 @@ rst_df %>%
 		  Power_SE = sd(Power)/sqrt(100)) %>%
 	dplyr::rename("Power" = "power","FDR" = 'fdr') %>%
 	write.table(file = output_file,row.names = F, col.names = T, sep = '\t',quote = F)
+
+#Table of GPPC and truth
+
+rst_df <- NULL
+
+for (i in 1:length(filenames)){
+        df <- read.table(filenames[i],h=T,sep = '\t')
+
+	df$cgene <- 0
+	
+	df$cgene[df$gamma != 0 | df$delta != 0] <- 1
+
+	coloc_rst <- df[,c("gene","glcp_expr","glcp_protein")]
+        multi_intact_rst <- multi_intact_scan(chisq_vec_dof = 2,
+                                      chisq_vec = df$chisq,
+                                      coloc_rst = coloc_rst)
+
+	multi_intact_rst <- multi_intact_rst[,c(1,9)]
+
+	df <- merge(df,multi_intact_rst,by="gene")
+
+	tmp_rst <- df[,c("gene","cgene","posterior","expr_r2","protein_r2","ct_r2","ct_r2_med_expr","ct_r2_med_protein")]
+
+	colnames(tmp_rst)[3] <- "GPPC"
+
+	tmp_rst$sim_num <- i
+
+        rst_df <- rbind.data.frame(rst_df,tmp_rst)
+}
+
+#calculate power stratified by PVE
+
+
+write.table(rst_df,file="sim_rst/gppc_summary_table.txt",quote=F,sep='\t',row.names=F,col.names=T)
+
+
+d = read.table("sim_rst/gppc_summary_table.txt", head=T)
+attach(d)
+
+
+lfdr = sort(1-GPPC)
+FDR = cumsum(lfdr)/1:length(lfdr)
+thresh = 1-lfdr[max(which(FDR<=0.05))]
+
+powers <- c()
+
+rej = cgene[GPPC>=thresh&expr_r2<=.05]
+powers <- c(powers,sum(rej)/sum(cgene[expr_r2<=0.05]))
+rej = cgene[GPPC>=thresh&protein_r2<=.05]
+powers <- c(powers,sum(rej)/sum(cgene[protein_r2<=0.05]))
+rej = cgene[GPPC>=thresh&ct_r2<=.05]
+powers <- c(powers,sum(rej)/sum(cgene[ct_r2<=0.05]))
+
+rej = cgene[GPPC>=thresh&expr_r2>0.05&expr_r2<=0.15]
+powers <- c(powers,sum(rej)/sum(cgene[expr_r2>0.05&expr_r2<=0.15]))
+rej = cgene[GPPC>=thresh&protein_r2>0.05&protein_r2<=0.15]
+powers <- c(powers,sum(rej)/sum(cgene[protein_r2>0.05&protein_r2<=0.15]))
+rej = cgene[GPPC>=thresh&ct_r2>0.05&ct_r2<=0.15]
+powers <- c(powers,sum(rej)/sum(cgene[ct_r2>0.05&ct_r2<=0.15]))
+
+rej = cgene[GPPC>=thresh&expr_r2>0.15&expr_r2<=0.25]
+powers <- c(powers,sum(rej)/sum(cgene[expr_r2>0.15&expr_r2<=0.25]))
+rej = cgene[GPPC>=thresh&protein_r2>0.15&protein_r2<=0.25]
+powers <- c(powers,sum(rej)/sum(cgene[protein_r2>0.15&protein_r2<=0.25]))
+rej = cgene[GPPC>=thresh&ct_r2>0.15&ct_r2<=0.25]
+powers <- c(powers,sum(rej)/sum(cgene[ct_r2>0.15&ct_r2<=0.25]))
+
+rej = cgene[GPPC>=thresh&expr_r2>0.25]
+powers <- c(powers,sum(rej)/sum(cgene[expr_r2>0.25]))
+rej = cgene[GPPC>=thresh&protein_r2>0.25]
+powers <- c(powers,sum(rej)/sum(cgene[protein_r2>0.25]))
+rej = cgene[GPPC>=thresh&ct_r2>0.25]
+powers <- c(powers,sum(rej)/sum(cgene[ct_r2>0.25]))
+
+plotdf <- data.frame("pve" = rep(c("Low\n(0, 0.05]",
+				   "Low-Medium\n(0.05, 0.15]",
+				   "Medium-High\n(0.15, 0.25]",
+				   "High\n(0.25, 1]"),each=3),
+		     "type" = rep(c("Expression","Protein","Complex Trait"),4),
+		     "power" = powers)
+
+pdf("sim_rst/power_stratified_by_pve.pdf")
+plotdf %>%
+	mutate(pve = factor(pve,levels = c("Low\n(0, 0.05]",
+					    "Low-Medium\n(0.05, 0.15]",
+					    "Medium-High\n(0.15, 0.25]",
+					    "High\n(0.25, 1]"))) %>%
+	mutate(type = factor(type,levels = c("Expression","Protein","Complex Trait"))) %>%
+	ggplot(aes(x = type,y=power,fill=type)) + 
+	geom_bar(position="dodge",stat="identity") +
+	facet_wrap(~pve,nrow=1) +
+	scale_fill_manual(values = c("blue","red","dark green")) +
+	xlab("") +
+	ylab("Power") + 
+	theme_bw() + 
+	theme(text = element_text(size = 10,face="bold"),legend.position="none",axis.text.x = element_text(angle = 45, hjust=1),aspect.ratio = 1)
+dev.off()
+
+
+
+
+
+
+
 
 
 

@@ -119,6 +119,7 @@ rst_df %>%
         facet_grid(~class_num) +
         xlab("Posterior Type") +
         ylab(expression("Posterior"))+
+	scale_fill_manual(values = c("blue","red","purple")) + 
 	scale_x_discrete(labels = c('Expression' = expression(paste(italic("M"["E"])," (Expression)")),
                                       'Protein'   = expression(paste(italic("M"["P"])," (Protein)")),
 				      "Expression +\nProtein" = expression(paste(italic("M"["E+P"])," (Expression + Protein)")))) +

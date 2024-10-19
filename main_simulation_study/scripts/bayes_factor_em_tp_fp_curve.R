@@ -128,6 +128,7 @@ print(
 	xlab("False Discoveries") +
 	ylab("True Discoveries") +
 	scale_linetype_manual(name = "Method", values = c(1,2,3,4))+
+	scale_color_manual(values = c("purple","dark green","blue","red")) + 
 	coord_cartesian(xlim = c(0,min(cutoffe[2],cutoffp[2])),ylim = c(0,min(cutoffe[1],cutoffp[1]))) +
 	geom_text(data = text_df,aes(x = X2,y=X1,label = label),size=5,vjust   = 0.8) +
 	theme_bw() + 
