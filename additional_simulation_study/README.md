@@ -12,7 +12,7 @@ INTACT (1.0.2), qvalue (1.5.0), SQUAREM (2021.1), aod (1.3.2),  dplyr (1.1.3), g
 
 ## Running analysis
 
-Before running the analysis, copy the sim_data/ directory from the Additional simulation study Google drive folder at https://tinyurl.com/ye2aysvf to this directory.
+Before running the analysis, copy the sim_data/ directory from the Additional simulation study Google drive folder at https://tinyurl.com/mvbrzt2j to this directory.
 
 Run ```make``` to start the analysis process.
 
